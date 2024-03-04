@@ -1,0 +1,50 @@
+
+***********************************************************
+***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***
+***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***
+***  MATCH THE INPUT VALUES FOR EACH REGISTER LOCATION  ***
+***********************************************************
+
+Reseting the instruction register...
+
+Writing values to register stack...
+Writing to register location 0:
+  opcode = 1 (PASSA)
+  operand_a = -12
+  operand_b = 7
+
+Writing to register location 1:
+  opcode = 0 (ZERO)
+  operand_a = -9
+  operand_b = 1
+
+Writing to register location 2:
+  opcode = 7 (MOD)
+  operand_a = -15
+  operand_b = 8
+
+
+Reading back the same register locations written...
+Read from register location 0:
+  opcode = 1 (PASSA)
+  operand_a = -12
+  operand_b = 7
+
+Read from register location 1:
+  opcode = 0 (ZERO)
+  operand_a = -9
+  operand_b = 1
+
+Read from register location 2:
+  opcode = 7 (MOD)
+  operand_a = -15
+  operand_b = 8
+
+
+***********************************************************
+***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***
+***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***
+***  MATCH THE INPUT VALUES FOR EACH REGISTER LOCATION  ***
+***********************************************************
+
+** Note: $finish    : instr_register_test_solution.sv(61)
