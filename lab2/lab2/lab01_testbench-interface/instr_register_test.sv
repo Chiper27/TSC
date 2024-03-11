@@ -16,11 +16,14 @@ module instr_register_test
    output address_t      write_pointer,
    output address_t      read_pointer,
    input  instruction_t  instruction_word
-  );
+  );//dut ul are output care merge in test
 
   timeunit 1ns/1ns;
 
   int seed = 555;
+
+  parameter readNumber  = 20;
+  parameter writeNumber = 20;
 
   initial begin
     $display("\n\n***********************************************************");
@@ -30,7 +33,7 @@ module instr_register_test
     $display(    "***********************************************************");
 
     $display("\nReseting the instruction register...");
-    write_pointer  = 5'h00;         // initialize write pointer
+    write_pointer  = 5'h00;         // 5 biti in hexazecimal si toate in zero
     read_pointer   = 5'h1F;         // initialize read pointer
     load_en        = 1'b0;          // initialize load control line
     reset_n       <= 1'b0;          // assert reset_n (active low)
@@ -39,7 +42,8 @@ module instr_register_test
 
     $display("\nWriting values to register stack...");
     @(posedge clk) load_en = 1'b1;  // enable writing to register
-    repeat (3) begin
+    // repeat (3) begin Chiper Stefan 03/11/2024 
+    repeat (readNumber) begin 
       @(posedge clk) randomize_transaction;
       @(negedge clk) print_transaction;
     end
@@ -47,12 +51,14 @@ module instr_register_test
 
     // read back and display same three register locations
     $display("\nReading back the same register locations written...");
-    for (int i=0; i<=2; i++) begin
+    // for (int i=0; i<=2; i++) begin Chiper Stefan 03/11/2024
+    for (int i=0; i<=writeNumber; i++) begin
       // later labs will replace this loop with iterating through a
       // scoreboard to determine which addresses were written and
       // the expected values to be read back
       @(posedge clk) read_pointer = i;
       @(negedge clk) print_results;
+      checkResult;
     end
 
     @(posedge clk) ;
@@ -72,10 +78,10 @@ module instr_register_test
     // addresses of 0, 1 and 2.  This will be replaceed with randomizeed
     // write_pointer values in a later lab
     //
-    static int temp = 0;
-    operand_a     <= $random(seed)%16;                 // between -15 and 15
-    operand_b     <= $unsigned($random)%16;            // between 0 and 15
-    opcode        <= opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type
+    static int temp = 0; // static se refera ca este alocata o singura data
+    operand_a     <= $random(seed)%16;                 // between -15 and 15 | random este implementat in functie de vendor= producatorul toolui
+    operand_b     <= $unsigned($random)%16;            // between 0 and 15 |unsinged converteste numerele negative in numere pozitive
+    opcode        <= opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type| opcode_t' -inseamna cast =converstete la tipul opcode_t
     write_pointer <= temp++;
   endfunction: randomize_transaction
 
@@ -90,7 +96,13 @@ module instr_register_test
     $display("Read from register location %0d: ", read_pointer);
     $display("  opcode = %0d (%s)", instruction_word.opc, instruction_word.opc.name);
     $display("  operand_a = %0d",   instruction_word.op_a);
-    $display("  operand_b = %0d\n", instruction_word.op_b);
+    $display("  operand_b = %0d", instruction_word.op_b);
+    $display(" result_t = %0d\n", instruction_word.rezultat);
   endfunction: print_results
 
+  function void checkResult;
+//o punem dupa print result
+//o functie care se numeste exepcted rezult 
+// un mesaj cu pass sau fail
+  endfunction
 endmodule: instr_register_test

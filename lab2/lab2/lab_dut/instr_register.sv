@@ -30,14 +30,18 @@
 		end
 		else if (load_en) begin 
 		  case (opcode)
-			ZERO: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, 0}; //rezultatul este setat la 0
-			PASSA: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a}; //rezultatul este operandul A
-			PASSB: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_b};//rezultatul este operandul B
-			ADD: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a + operand_b};
-			SUB: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a - operand_b};
-			MULT: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a * operand_b};
-			DIV: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a / operand_b};
-			MOD: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a % operand_b};  
+				ZERO: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, 0}; //rezultatul este setat la 0
+				PASSA: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a}; //rezultatul este operandul A
+				PASSB: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_b};//rezultatul este operandul B
+				ADD: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a + operand_b};
+				SUB: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a - operand_b};
+				MULT: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a * operand_b};
+				DIV:
+					if(!operand_b )
+						iw_reg[write_pointer] = 1'b0;
+					else
+						iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a / operand_b};
+				MOD: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a % operand_b};  
 		  endcase 
 		end
 
