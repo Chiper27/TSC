@@ -113,7 +113,7 @@ module instr_register_test
     ADD: exp_result = instruction_word.op_a + instruction_word.op_b;
     SUB: exp_result = instruction_word.op_a - instruction_word.op_b;
     PASSA: exp_result = instruction_word.op_a;
-    PASSB: exp_result = instruction_word.op_a;
+    PASSB: exp_result = instruction_word.op_b;
     MULT: exp_result = instruction_word.op_a * instruction_word.op_b;
     DIV:
          if(!instruction_word.op_b)

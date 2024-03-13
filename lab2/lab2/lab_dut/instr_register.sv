@@ -38,7 +38,7 @@
 				MULT: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a * operand_b};
 				DIV:
 					if(!operand_b )
-						iw_reg[write_pointer] = 1'b0;
+						iw_reg[write_pointer] ='{opcode,operand_a,operand_b, 0};
 					else
 						iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a / operand_b};
 				MOD: iw_reg[write_pointer] = '{opcode,operand_a,operand_b, operand_a % operand_b};  
