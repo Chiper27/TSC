@@ -60,7 +60,7 @@ module instr_register_test
       @(negedge clk) print_results;
       checkResult;
     end
-
+    
     @(posedge clk) ;
     $display("\n***********************************************************");
     $display(  "***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
@@ -101,8 +101,35 @@ module instr_register_test
   endfunction: print_results
 
   function void checkResult;
-//o punem dupa print result
-//o functie care se numeste exepcted rezult 
-// un mesaj cu pass sau fail
-  endfunction
+  int exp_result;
+ //calculam si aici rezultatul si comparam cu cel primit de la DUT
+  //actual instr_word.result, declaram variabila locala exp_result
+  //din instr lusm op a, op b, opcode si mai facem calculul o data
+   //la final un if separat care trebuie sa faca comparatie intre rezultat comparat aici si rezultatul primit
+
+  // Calculul rezultatului așteptat folosind instrucțiunile primite
+  case (instruction_word.opc)
+    ZERO : exp_result = 0;
+    ADD: exp_result = instruction_word.op_a + instruction_word.op_b;
+    SUB: exp_result = instruction_word.op_a - instruction_word.op_b;
+    PASSA: exp_result = instruction_word.op_a;
+    PASSB: exp_result = instruction_word.op_a;
+    MULT: exp_result = instruction_word.op_a * instruction_word.op_b;
+    DIV:
+         if(!instruction_word.op_b)
+              exp_result = 0;
+         else
+              exp_result = instruction_word.op_a / instruction_word.op_b;
+    MOD: exp_result = instruction_word.op_a % instruction_word.op_b;
+    default: $display("Non existent operator");
+  endcase
+
+  // Compararea rezultatului așteptat cu rezultatul primit de la DUT
+  if (exp_result == instruction_word.rezultat) begin
+    $display("Result check: Approved");
+  end else begin
+    $display("Result check: Unapproved");
+  end
+  endfunction:checkResult
+
 endmodule: instr_register_test
