@@ -19,16 +19,20 @@ module instr_register_test
   );//dut ul are output care merge in test
 
   timeunit 1ns/1ns;
-  parameter readNumber  = 20;
-  parameter writeNumber = 20;
-
+  parameter readNumber  = 50;
+  parameter writeNumber = 50;
+  int write_order = 2;
+  int read_order = 0;
+//se ia doar primi 5 biti de la int deoarece e pe 5 biti , si de asta read si writePointer ajunge pana la maxim 31 si dupa face overflow s
+// se reseteaza in 0
   int seed = 555;
   instruction_t  iw_test_reg [0:31]; 
-
+  int failedTest = 0;
+  int passedTest = 0;
 
   initial begin
     $display("\n\n***********************************************************");
-    $display(    "***  THIS IS A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
+    $display(    "***  THIS IS A SELF-CHECKING TESTBENCH .  YOU DON'T  ***");
     $display(    "***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***");
     $display(    "***  MATCH THE INPUT VALUES FOR EACH REGISTER LOCATION  ***");
     $display(    "***********************************************************");
@@ -58,20 +62,27 @@ module instr_register_test
       // later labs will replace this loop with iterating through a
       // scoreboard to determine which addresses were written and
       // the expected values to be read back
-      @(posedge clk) read_pointer = i;
+      // @(posedge clk) read_pointer = i;
+      case(read_order)
+      0: @(posedge clk) read_pointer = i;
+      1: @(posedge clk) read_pointer = 31-(i%32);
+      2: @(posedge clk) read_pointer = $unsigned($random)%32;
+      endcase
       @(negedge clk) print_results;
       checkResult;
     end
     
+     final_report;
+
     @(posedge clk) ;
     $display("\n***********************************************************");
-    $display(  "***  THIS IS A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
+    $display(  "***  THIS IS A SELF-CHECKING TESTBENCH .  YOU DON'T  ***");
     $display(  "***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***");
     $display(  "***  MATCH THE INPUT VALUES FOR EACH REGISTER LOCATION  ***");
     $display(  "***********************************************************\n");
     $finish;
   end
-
+ 
   function void randomize_transaction;
     // A later lab will replace this function with SystemVerilog
     // constrained random values
@@ -81,10 +92,17 @@ module instr_register_test
     // write_pointer values in a later lab
     //
     static int temp = 0; // static se refera ca este alocata o singura data
+    static int temp_decrement = 31;
     operand_a     <= $random(seed)%16;                 // between -15 and 15 | random este implementat in functie de vendor= producatorul toolui
     operand_b     <= $unsigned($random)%16;            // between 0 and 15 |unsinged converteste numerele negative in numere pozitive
     opcode        <= opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type| opcode_t' -inseamna cast =converstete la tipul opcode_t
-    write_pointer <= temp++;
+    
+    case (write_order) 
+      0: write_pointer = temp++;
+      1: write_pointer = temp_decrement--;
+      2: write_pointer = $unsigned($random)%32;
+    endcase
+
   endfunction: randomize_transaction
 
   function void print_transaction;
@@ -139,8 +157,10 @@ module instr_register_test
   // Compararea rezultatului așteptat cu rezultatul primit de la DUT
   if (exp_result == instruction_word.rezultat) begin
     $display("Result check: Approved");
+    passedTest++;
   end else begin
     $display("Result check: Unapproved");
+    failedTest++;
   end
   endfunction:checkResult
 
@@ -153,5 +173,12 @@ module instr_register_test
     $display("  operand_a = %0d",   iw_test_reg[write_pointer].op_a);
     $display("  operand_b = %0d", iw_test_reg[write_pointer].op_b);
   endfunction:saveTestData
+
+ function final_report;
+
+  $display("Failed tests %0d: ", failedTest);
+  $display("Passed tests %0d: ", passedTest);
+
+ endfunction:final_report
 
 endmodule: instr_register_test
