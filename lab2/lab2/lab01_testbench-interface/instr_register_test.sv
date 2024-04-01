@@ -19,7 +19,7 @@ module instr_register_test
   );//dut ul are output care merge in test
 
   timeunit 1ns/1ns;
-  parameter readNumber  = 50;
+  parameter readNumber  = 49;
   parameter writeNumber = 50;
   int write_order = 2;
   int read_order = 0;
@@ -42,13 +42,16 @@ module instr_register_test
     read_pointer   = 5'h1F;         // initialize read pointer
     load_en        = 1'b0;          // initialize load control line
     reset_n       <= 1'b0;          // assert reset_n (active low)
+    foreach ( iw_test_reg[i]) begin
+       iw_test_reg[i] = '{opc: ZERO, default: 0};
+    end
     repeat (2) @(posedge clk) ;     // hold in reset for 2 clock cycles
     reset_n        = 1'b1;          // deassert reset_n (active low)
 
     $display("\nWriting values to register stack...");
     @(posedge clk) load_en = 1'b1;  // enable writing to register
     // repeat (3) begin Chiper Stefan 03/11/2024 
-    repeat (readNumber) begin 
+    repeat (writeNumber) begin 
       @(posedge clk) randomize_transaction;
       @(negedge clk) print_transaction;
       saveTestData;
@@ -58,7 +61,7 @@ module instr_register_test
     // read back and display same three register locations
     $display("\nReading back the same register locations written...");
     // for (int i=0; i<=2; i++) begin Chiper Stefan 03/11/2024
-    for (int i=0; i<=writeNumber; i++) begin
+    for (int i=0; i<=readNumber; i++) begin
       // later labs will replace this loop with iterating through a
       // scoreboard to determine which addresses were written and
       // the expected values to be read back
@@ -122,17 +125,17 @@ module instr_register_test
 
   function void checkResult;
   int exp_result;
-  if( iw_test_reg[read_pointer].opc== instruction_word.opc)
+  if( iw_test_reg[read_pointer].opc == instruction_word.opc  )
     $display("Opcode is correct from register location %0d: ", read_pointer);
   else
     $display("Opcode is incorrect from register location %0d: ", read_pointer);
 
-  if( iw_test_reg[read_pointer].op_a== instruction_word.op_a)
+  if( iw_test_reg[read_pointer].op_a == instruction_word.op_a)
     $display("Operant_a is correct from register location %0d: ", read_pointer);
   else
     $display("Operant_a is incorrect from register location %0d: ", read_pointer);
 
-  if( iw_test_reg[read_pointer].op_b== instruction_word.op_b)
+  if( iw_test_reg[read_pointer].op_b == instruction_word.op_b)
       $display("Operant_b is correct from register location %0d: ", read_pointer);
     else
       $display("Operant_b is incorrect from register location %0d: ", read_pointer);
