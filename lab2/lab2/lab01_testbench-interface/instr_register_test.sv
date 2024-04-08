@@ -21,10 +21,11 @@ module instr_register_test
   timeunit 1ns/1ns;
   parameter readNumber  = 49;
   parameter writeNumber = 50;
-  int write_order = 2;
-  int read_order = 0;
+  parameter write_order = 2;
+  parameter read_order = 0;
 //se ia doar primi 5 biti de la int deoarece e pe 5 biti , si de asta read si writePointer ajunge pana la maxim 31 si dupa face overflow s
 // se reseteaza in 0
+  parameter TEST_REG;
   int seed = 555;
   instruction_t  iw_test_reg [0:31]; 
   int failedTest = 0;
@@ -181,7 +182,12 @@ module instr_register_test
 
   $display("Failed tests %0d: ", failedTest);
   $display("Passed tests %0d: ", passedTest);
-
+// facem aici cu fopen si deschidem fiser ,sa arate pass sau fail
+// putem sa mai facem si un nou parameter
+//cum adaugi un paramter nou
+// cum salvam formele de unda
+//mai lucreaza acaasa
+// adauga un bit de semn, tre sa mergi in packege
  endfunction:final_report
 
 endmodule: instr_register_test

@@ -20,7 +20,8 @@ package instr_register_pkg;
  typedef logic signed [31:0] operand_t;   
 
   typedef logic signed [63:0] result_t; 
-  
+  //bitul de 63 reprezinta semnul
+  // bitul se declara cu b si pui sa fie egal cu semn
   typedef logic [4:0] address_t;     
   
   typedef struct {
